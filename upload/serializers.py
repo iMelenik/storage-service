@@ -4,15 +4,17 @@ from rest_framework import serializers
 
 from conf.settings import MEDIA_MAX_FILE_SIZE
 from upload.models.file import File, ALLOWED_CONTENT_TYPES
+from utils.serializer.fields import IntToDateTimeField
 
 
 class FileSerializer(serializers.ModelSerializer):
+    uploaded_at = IntToDateTimeField(read_only=True)
+
     class Meta:
         model = File
         fields = ('file', 'uploaded_at', 'is_processed')
         extra_kwargs = {
             'file': {'required': True, 'max_length': 50, 'allow_empty_file': False, 'use_url': False},
-            'uploaded_at': {'read_only': True},
             'is_processed': {'read_only': True}
         }
 
@@ -35,5 +37,5 @@ class FileSerializer(serializers.ModelSerializer):
         content_type = self.validated_data.pop('content_type')
         with transaction.atomic():
             file = super().save(**kwargs)
-            # process_file.delay(file.id, content_type)
+            process_file.delay(file.id, content_type)
         return file
