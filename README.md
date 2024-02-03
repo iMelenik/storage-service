@@ -11,3 +11,9 @@ docker-compose up -d
 docker exec -it storage-service-backend-1 bash
 pytest
 ```
+## Проверка покрытия тестами:
+Текущее значение - 95%.
+```
+docker exec -it storage-service-backend-1 bash
+pytest --cov
+```
