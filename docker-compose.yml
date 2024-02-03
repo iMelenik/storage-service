@@ -40,50 +40,50 @@ services:
     ports:
       - "8000:8000"
 
-#  redis:
-#    env_file:
-#      - .env
-#    environment:
-#      - REDIS_REPLICATION_MODE=master
-#      - REDIS_HOST=redis
-#    image: 'redis:latest'
-#    restart: 'unless-stopped'
-#    command: '--bind redis'
-#    depends_on:
-#      - backend
-#    volumes:
-#      - redis_dump:/data
-#
-#  celery-worker:
-#    env_file:
-#      - .env
-#    build: ../.
-#    restart: unless-stopped
-#    command: celery -A conf worker -l info -B --pool=solo --concurrency=1
-#    depends_on:
-#      - backend
-#      - redis
-#    links:
-#      - redis
-#    volumes:
-#      - celery-db:/home/app/celery
-#      - ~/tmp/celery-worker.py:/home/app/celery-worker.py
-#      - ~/tmp/celery-beat.py:/home/app/celery-beat.py
-#
-#  celery-flower:
-#    image: mher/flower
-#    restart: unless-stopped
-#    environment:
-#      - CELERY_BROKER_URL=redis://redis:6379/0
-#      - FLOWER_PORT=8888
-#      - FLOWER_PERSISTENT=True
-#      - FLOWER_STATE_SAVE_INTERVAL=10000
-#      - FLOWER_DB=/data/flower.db
-#    command: celery flower --basic_auth=${API_DB_USER}:${API_DB_PASSWORD} --persistent=True
-#    depends_on:
-#      - celery-worker
-#      - redis
-#    ports:
-#      - ${FLOWER_PORT}:8888
-#    volumes:
-#      - flower_data:/data
+  redis:
+    env_file:
+      - .env
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_HOST=redis
+    image: 'redis:latest'
+    restart: 'unless-stopped'
+    command: '--bind redis'
+    depends_on:
+      - backend
+    volumes:
+      - redis_dump:/data
+
+  celery-worker:
+    env_file:
+      - .env
+    build: .
+    restart: unless-stopped
+    command: celery -A conf worker -l info -B --pool=solo --concurrency=1
+    depends_on:
+      - backend
+      - redis
+    links:
+      - redis
+    volumes:
+      - celery-db:/home/app/celery
+      - ~/tmp/celery-worker.py:/home/app/celery-worker.py
+      - ~/tmp/celery-beat.py:/home/app/celery-beat.py
+
+  celery-flower:
+    image: mher/flower
+    restart: unless-stopped
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - FLOWER_PORT=8888
+      - FLOWER_PERSISTENT=True
+      - FLOWER_STATE_SAVE_INTERVAL=10000
+      - FLOWER_DB=/data/flower.db
+    command: celery flower --basic_auth=${API_DB_USER}:${API_DB_PASSWORD} --persistent=True
+    depends_on:
+      - celery-worker
+      - redis
+    ports:
+      - ${FLOWER_PORT}:8888
+    volumes:
+      - flower_data:/data
