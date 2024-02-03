@@ -2,7 +2,7 @@ from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from conf.settings import MEDIA_MAX_FILE_SIZE
+from conf.settings import FILE_UPLOAD_MAX_MEMORY_SIZE
 from upload.models.file import File, ALLOWED_CONTENT_TYPES
 from utils.serializer.fields import IntToDateTimeField
 from .tasks import process_file
@@ -20,7 +20,7 @@ class FileSerializer(serializers.ModelSerializer):
         }
 
     def validate_file(self, file):
-        if file.size > MEDIA_MAX_FILE_SIZE:
+        if file.size > FILE_UPLOAD_MAX_MEMORY_SIZE:
             raise serializers.ValidationError(_('File size is too large.'))
         return file
 
