@@ -21,7 +21,8 @@ class FileSerializer(serializers.ModelSerializer):
 
     def validate_file(self, file):
         if file.size > FILE_UPLOAD_MAX_MEMORY_SIZE:
-            raise serializers.ValidationError(_('File size is too large.'))
+            raise serializers.ValidationError(_(
+                    'File size is too large. At most {} bytes are allowed').format(FILE_UPLOAD_MAX_MEMORY_SIZE))
         return file
 
     def validate(self, attrs):

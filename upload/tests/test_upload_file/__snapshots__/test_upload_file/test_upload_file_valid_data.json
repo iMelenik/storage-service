@@ -1,0 +1,5 @@
+{
+  "file": "str",
+  "is_processed": "bool",
+  "uploaded_at": "int"
+}
